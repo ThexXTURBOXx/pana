@@ -167,8 +167,8 @@ class PackageAnalyzer {
     final options = sharedContext.options;
 
     final dartFiles = <String>[];
-    final fileList = listFiles(pkgDir, deleteBadExtracted: true);
-    await for (final file in fileList) {
+    final fileList = await listFiles(pkgDir, deleteBadExtracted: true);
+    for (final file in fileList) {
       final isInBin = path.isWithin('bin', file);
       final isInLib = path.isWithin('lib', file);
       final isDart = file.endsWith('.dart');

@@ -26,6 +26,7 @@ dependencies:
   tar: ^0.5.4
   yaml: ^3.0.0
   safe_url_check: ^1.0.0
+  safe_local_storage: ^1.0.0
   retry: ^3.0.1
   meta: ^1.4.0
   string_scanner: ^1.1.0

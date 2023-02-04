@@ -9,6 +9,7 @@ import 'package:pana/pana.dart';
 import 'package:pana/src/utils.dart';
 import 'package:path/path.dart' as path;
 import 'package:pubspec_parse/pubspec_parse.dart' as p;
+import 'package:safe_local_storage/file_system.dart';
 
 final maxFileSizeInBytes = 4194304; // 4MB
 final maxFileSizeInMegaBytes = maxFileSizeInBytes / (1024 * 1024);
@@ -91,7 +92,7 @@ Future<List<ScreenshotResult>> processAllScreenshots(
     }
     return results;
   } finally {
-    tempDir.deleteSync(recursive: true);
+    await tempDir.delete_();
   }
 }
 

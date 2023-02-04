@@ -13,6 +13,7 @@ import 'package:io/ansi.dart';
 import 'package:io/io.dart';
 import 'package:logging/logging.dart' as log;
 import 'package:pana/pana.dart';
+import 'package:safe_local_storage/file_system.dart';
 
 const defaultHostedUrl = 'https://pub.dev';
 
@@ -206,7 +207,7 @@ Future main(List<String> args) async {
       exitCode = 1;
     }
   } finally {
-    tempDir.deleteSync(recursive: true);
+    await tempDir.delete_();
   }
 
   await subscription.cancel();

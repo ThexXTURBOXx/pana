@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:retry/retry.dart';
+import 'package:safe_local_storage/file_system.dart';
 import 'package:yaml/yaml.dart';
 
 import 'logging.dart';
@@ -120,18 +121,16 @@ Future<PanaProcessResult> runProc(
   );
 }
 
-Stream<String> listFiles(String directory,
-    {String? endsWith, bool deleteBadExtracted = false}) {
+Future<Iterable<String>> listFiles(String directory,
+    {String? endsWith, bool deleteBadExtracted = false}) async {
   var dir = Directory(directory);
-  return dir
-      .list(recursive: true)
-      .where((fse) => fse is File)
+  return (await dir.list_())
       .where((fse) {
         if (deleteBadExtracted) {
           var segments = p.split(fse.path);
           if (segments.last.startsWith('._')) {
             log.info('Deleting invalid file: `${fse.path}`.');
-            fse.deleteSync();
+            fse.delete_();
             return false;
           }
         }
@@ -197,7 +196,7 @@ Future<List<String>> listFocusDirs(String packageDir) async {
     if ((await FileSystemEntity.type(path)) != FileSystemEntityType.directory) {
       continue;
     }
-    if (await listFiles(path, endsWith: '.dart').isEmpty) {
+    if ((await listFiles(path, endsWith: '.dart')).isEmpty) {
       continue;
     }
     dirs.add(dir);
@@ -235,7 +234,7 @@ Future<T> withTempDir<T>(FutureOr<T> Function(String path) fn) async {
     tempDir = await Directory.systemTemp.createTemp('pana_');
     return await fn(tempDir.resolveSymbolicLinksSync());
   } finally {
-    tempDir?.deleteSync(recursive: true);
+    await tempDir?.delete_();
   }
 }
 
