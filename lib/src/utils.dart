@@ -235,7 +235,11 @@ Future<T> withTempDir<T>(FutureOr<T> Function(String path) fn) async {
     tempDir = await Directory.systemTemp.createTemp('pana_');
     return await fn(tempDir.resolveSymbolicLinksSync());
   } finally {
-    tempDir?.deleteSync(recursive: true);
+    if (tempDir != null) {
+      final isAbsolute = p.isAbsolute(tempDir.path);
+      final prefix = Platform.isWindows && isAbsolute ? r'\\?\' : '';
+      Directory(prefix + tempDir.path).deleteSync(recursive: true);
+    }
   }
 }
 
